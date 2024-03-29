@@ -16,6 +16,7 @@ import { useDayjs } from "@/utils/dayjs";
 import { trpc } from "@/utils/trpc/client";
 
 import Loader from "./loading";
+import { useUser } from "@/components/user-provider";
 
 const EmptyState = () => {
   return (
@@ -47,6 +48,7 @@ const EmptyState = () => {
 };
 
 type Column = {
+  userId: string;
   id: string;
   status: PollStatus;
   title: string;
@@ -72,6 +74,7 @@ export function PollsList() {
     }),
     [searchParams],
   );
+  const { user } = useUser();
 
   const { data } = trpc.polls.paginatedList.useQuery({ pagination });
   const { adjustTimeZone } = useDayjs();
@@ -82,8 +85,12 @@ export function PollsList() {
         header: () => null,
         size: 5000,
         cell: ({ row }) => {
+          const url = row.original.userId == user.id ?
+            `/poll/${row.original.id}` :
+            `/invite/${row.original.id}`;
+
           return (
-            <Link className="group block" href={`/poll/${row.original.id}`}>
+            <Link className="group block" href={url}>
               <div className="mb-1 flex min-w-0 items-center gap-x-2">
                 <h3 className="truncate font-semibold text-gray-600 group-hover:text-gray-900">
                   {row.original.title}

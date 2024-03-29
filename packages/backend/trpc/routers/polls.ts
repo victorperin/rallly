@@ -447,11 +447,13 @@ export const polls = router({
         }),
         prisma.poll.findMany({
           where: {
-            userId: ctx.user.id,
+            // Finds all polls in platform
+            // userId: ctx.user.id,
             deleted: false,
           },
           select: {
             id: true,
+            userId: true,
             title: true,
             location: true,
             createdAt: true,
